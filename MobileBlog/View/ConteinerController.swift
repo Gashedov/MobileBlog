@@ -8,10 +8,14 @@
 
 import UIKit
 
+/// Controller contains both homre and menu controllers and manages they displaying
 class ContainerController: UIViewController {
+    
     //MARK:- Properties
     
+    /// left side munu controller
     private var menuController : MenuController!
+    ///
     private var centerController:  UIViewController!
     private var isExpended = false
     private var userAcess: UserAccess = .unauthorized
@@ -25,7 +29,7 @@ class ContainerController: UIViewController {
     
     //MARK:- public methods
     
-    func setUserAccess(access : UserAccess){
+    func setUserAccess(access : UserAccess) {
         userAcess = access
     }
     
@@ -50,7 +54,7 @@ class ContainerController: UIViewController {
    private func configureHomeController() {
         let homeController = HomeController()
         centerController = UINavigationController(rootViewController: homeController)
-        homeController.delegate = self
+        homeController.menuDelegate = self
         
         view.addSubview(centerController.view)
         addChild(centerController)
@@ -64,21 +68,34 @@ class ContainerController: UIViewController {
             view.insertSubview(menuController.view, at: 0)
             addChild(menuController)
             menuController.didMove(toParent: self)
-            print("menu controller configured")
+            NSLog("Menu controller configured")
         }
     }
-    
+
     private func didSelectMenuOption(menuOption: MenuOptions) {
+        let controller = centerController.children.last { (controller) -> Bool in
+                controller is HomeController
+        }
+        
+        guard let homeController = controller as? HomeController else {
+            NSLog("Couldn't get home controller from navigation controller")
+            return
+        }
+
         switch menuOption {
             
         case .Posts:
+            homeController.changeDataSet(to: .allPublications)
             print("Posts open")
         case .MyPosts:
+            homeController.changeDataSet(to: .ownPublications)
             print("My posts open")
         case .LikedPosts:
+            homeController.changeDataSet(to: .likedPublications)
             print("Liked posts open")
         case .NewPost:
-            print("New post open")
+            let postCreatingController = PostCreatingViewController()
+            navigationController?.pushViewController(postCreatingController, animated: true)
         }
     }
 }

@@ -12,6 +12,10 @@ import SnapKit
 class AutorizationController: UIViewController {
     
 //    MARK:- Properties
+    private let httpClient = HttpClient()
+    private let verifyer = Verifier()
+    private let viewModel = AuthorizationViewModel()
+    
     private let containerView = UIView()
     
     private let loginLabel = UILabel()
@@ -26,9 +30,11 @@ class AutorizationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewModel.delegate = self
         view.backgroundColor = .white
         configurateViews()
         configureNavigationBar()
+        // mb should init containerController here to preload publication list
 
     }
     
@@ -40,7 +46,8 @@ class AutorizationController: UIViewController {
         alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-    private func ShowHomeViewController(with option: UserAccess) {
+    
+    private func ShowHomeViewController(withOption option: UserAccess) {
         let nextController = ContainerController()
         nextController.modalPresentationStyle = .fullScreen
         nextController.setUserAccess(access: option)
@@ -50,17 +57,18 @@ class AutorizationController: UIViewController {
 //    MARK:- Buttons handlers
     
     @objc private func loginButtonPressed() {
-        ShowHomeViewController(with: .authorized)
+        let login = loginTextField.text ?? ""
+        let password  = passwordTextField.text ?? ""
+        viewModel.logIn(login: login, password: password)
     }
     
     @objc private func enterWithoutLoginButtonPressed() {
-        ShowHomeViewController(with: .unauthorized)
+        ShowHomeViewController(withOption: .unauthorized)
     }
     
     @objc private func registrationButtonPressed() {
         let registrationController = RegistrationViewController()
         self.navigationController?.pushViewController(registrationController, animated: true)
-        //present(registrationController, animated: true, completion: nil)
     }
     
     
@@ -190,7 +198,15 @@ class AutorizationController: UIViewController {
 //  MARK:- Extensions
 
 extension AutorizationController: ViewModelDelegate {
+    func couseAnError() {
+        guard let error = viewModel.error else {
+            NSLog("Could't handle error data")
+            return
+        }
+        showAlert(with: error.descridtion)
+    }
+    
     func dataRecieve() {
-        
+        ShowHomeViewController(withOption: .authorized)
     }
 }

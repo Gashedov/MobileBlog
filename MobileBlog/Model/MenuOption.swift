@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// class describes model of left side menu
 enum MenuOptions : Int, CustomStringConvertible {
     
     case Posts
@@ -15,6 +16,7 @@ enum MenuOptions : Int, CustomStringConvertible {
     case LikedPosts
     case NewPost
     
+    /// property describe name of all options
     var description: String {
         switch self {
             
@@ -29,6 +31,7 @@ enum MenuOptions : Int, CustomStringConvertible {
         }
     }
     
+    /// property descrinbe images of all options
     var image: UIImage {
         switch self {
             

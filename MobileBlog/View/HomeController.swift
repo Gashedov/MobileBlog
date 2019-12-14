@@ -10,9 +10,13 @@ import UIKit
 
 class HomeController: UIViewController {
     //MARK:- Properties
+    
+    private let reusableIdentifier = "HomeTableVeiewCell"
     let tableView = UITableView()
     
-    weak var delegate: HomeControllerDelegate?
+    weak var menuDelegate: HomeControllerDelegate?
+    private let viewModel = HomeViewModel()
+    
     //MARK:- Init
     
     override func viewDidLoad() {
@@ -20,20 +24,27 @@ class HomeController: UIViewController {
         view.backgroundColor = .white
         configureNavigationBar()
         configureTableView()
+        viewModel.delegate = self
+        viewModel.getData()
+    }
+    
+    func changeDataSet(to option: PublicationDataOption){
+        viewModel.changeDataSet(to: option)
     }
     
     //MARK:- Hendlers
     
     @objc func handleMenuTaggle() {
-        //tell the container controller to open menu bar
-        delegate?.handleMenuToggle(menuOption: nil)
+        //tells the container controller to open menu bar
+        menuDelegate?.handleMenuToggle(menuOption: nil)
     }
+    
+    // MARK:- Configuration
     
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         
-        //tableView.register(MenuTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = 80
         
         view.addSubview(tableView)
@@ -51,16 +62,36 @@ class HomeController: UIViewController {
     }
 }
 
+//MARK:- Extensions
+
 extension HomeController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return viewModel.data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: reusableIdentifier) as? HomeTableViewCell else {
+            return HomeTableViewCell()
+        }
+        let name = viewModel.data[safe: indexPath.row]?.name ?? ""
+        cell.setValues(name: name)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(PostViewController(), animated: true)
+        let nextViewController = PostViewController()
+        nextViewController.setData(publication: viewModel.data[indexPath.row])
+        navigationController?.pushViewController(nextViewController, animated: true)
     }
+}
+
+extension HomeController: ViewModelDelegate {
+    func dataRecieve() {
+        tableView.reloadData()
+    }
+    
+    func couseAnError() {
+    }
+    
+    
 }

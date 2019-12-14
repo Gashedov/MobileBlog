@@ -24,7 +24,7 @@ class MenuTableViewCell: UITableViewCell {
     
     let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 16)
         label.text = "Sample text"
         
