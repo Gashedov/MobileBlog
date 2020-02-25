@@ -1,14 +1,14 @@
 //
-//  AsyncronousTest.swift
-//  AsyncronousTest
+//  AuthorizationViewModelTest.swift
+//  MobileBlogTests
 //
-//  Created by Artem Gorshkov on 12/7/19.
+//  Created by Artem Gorshkov on 12/18/19.
 //  Copyright © 2019 Artem Gorshkov. All rights reserved.
 //
 
 import XCTest
 
-class AsyncronousTest: XCTestCase {
+class AuthorizationViewModelTest: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -25,7 +25,7 @@ class AsyncronousTest: XCTestCase {
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        measure {
+        self.measure {
             // Put the code you want to measure the time of here.
         }
     }
